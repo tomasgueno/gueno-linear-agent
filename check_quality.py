@@ -3,6 +3,10 @@ import os
 import requests
 import json
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 # URLs y configuración
 LINEAR_API_URL = "https://api.linear.app/graphql"
@@ -41,7 +45,7 @@ def execute_linear_tool(tool_name, tool_input):
     print(f"  → Executing {tool_name} with input: {json.dumps(tool_input, indent=2)}")
     
     # LINEAR: LIST ISSUES
-    if tool_name == "Linear:list_issues":
+    if tool_name == "linear_list_issues":
         query = """
         query($first: Int, $filter: IssueFilter) {
           issues(first: $first, filter: $filter) {
@@ -107,7 +111,7 @@ def execute_linear_tool(tool_name, tool_input):
         return result.get("data", {}).get("issues", {}).get("nodes", [])
     
     # LINEAR: GET ISSUE
-    elif tool_name == "Linear:get_issue":
+    elif tool_name == "linear_get_issue":
         query = """
         query($id: String!) {
           issue(id: $id) {
@@ -162,7 +166,7 @@ def execute_linear_tool(tool_name, tool_input):
         return result.get("data", {}).get("issue", {})
     
     # LINEAR: CREATE COMMENT
-    elif tool_name == "Linear:create_comment":
+    elif tool_name == "linear_create_comment":
         mutation = """
         mutation($issueId: String!, $body: String!) {
           commentCreate(input: {
@@ -393,7 +397,7 @@ Suggestions:
     # Definir Linear tools
     linear_tools = [
         {
-            "name": "Linear:list_issues",
+            "name": "linear_list_issues",
             "description": "List issues in the user's Linear workspace",
             "input_schema": {
                 "type": "object",
@@ -428,7 +432,7 @@ Suggestions:
             }
         },
         {
-            "name": "Linear:get_issue",
+            "name": "linear_get_issue",
             "description": "Retrieve detailed information about an issue by ID",
             "input_schema": {
                 "type": "object",
@@ -442,7 +446,7 @@ Suggestions:
             }
         },
         {
-            "name": "Linear:create_comment",
+            "name": "linear_create_comment",
             "description": "Create a comment on a specific Linear issue",
             "input_schema": {
                 "type": "object",
