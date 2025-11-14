@@ -8,34 +8,43 @@ on:
     - cron: '0 11 * * 3'
     # Viernes 8 AM Argentina (11:00 UTC)
     - cron: '0 11 * * 5'
-
+  
+  # Allow manual trigger
   workflow_dispatch:
 
 jobs:
   quality-check:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
+      
       - name: Install dependencies
         run: |
-          pip install anthropic
-
+          pip install anthropic requests
+      
       - name: Run quality check
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
         run: |
           python check_quality.py
-
+      
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: quality-check-logs
+          path: |
+            *.log
+      
       - name: Notify on failure
         if: failure()
         run: |
-          echo "Quality check failed! Check logs."
+          echo "❌ Quality check failed! Check logs in Actions tab."
