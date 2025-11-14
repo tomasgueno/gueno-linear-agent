@@ -27,7 +27,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install anthropic requests
+          pip install anthropic requests python-dotenv
       
       - name: Run quality check
         env:
