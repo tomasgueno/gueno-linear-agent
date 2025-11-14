@@ -1,0 +1,41 @@
+name: Gueno Linear Quality Check
+
+on:
+  schedule:
+    # Lunes 11 AM Argentina (14:00 UTC)
+    - cron: '0 14 * * 1'
+    # Miércoles 8 AM Argentina (11:00 UTC)
+    - cron: '0 11 * * 3'
+    # Viernes 8 AM Argentina (11:00 UTC)
+    - cron: '0 11 * * 5'
+
+  workflow_dispatch:
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic
+
+      - name: Run quality check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+        run: |
+          python check_quality.py
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Quality check failed! Check logs."
