@@ -475,7 +475,7 @@ Suggestions:
     
     # Loop principal de ejecución
     iteration = 0
-    max_iterations = 20  # Límite de seguridad
+    max_iterations = 50  # Límite de seguridad
     
     while iteration < max_iterations:
         iteration += 1
